@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>Procedural Thunder Sound Synthesizer | Physically-Modeled Audio</title>
+    <meta name="description" content="Create realistic, physically-modeled thunder sounds. This synthesizer uses procedural generation and N-wave synthesis for the most accurate thunder crack and rumble.">
+    <meta name="keywords" content="thunder generator, sound synthesizer, web audio, procedural audio, n-wave, physical modeling, storm sounds, sound design, javascript audio, html5 audio">
+    <meta name="author" content="Web Audio Creations">
+    <link rel="canonical" href="https://example.com/thunder-synthesizer">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚡</text></svg>">
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://example.com/thunder-synthesizer">
+    <meta property="og:title" content="Procedural Thunder Sound Synthesizer with N-Wave Modeling">
+    <meta property="og:description" content="Generate unique thunderstorm audio with physically-accurate N-wave synthesis for the thunder 'crack' using the Web Audio API.">
+    <meta property="og:image" content="https://placehold.co/1200x630/111827/FFFFFF?text=Thunder%0ASynthesizer">
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="https://example.com/thunder-synthesizer">
+    <meta property="twitter:title" content="Procedural Thunder Sound Synthesizer with N-Wave Modeling">
+    <meta property="twitter:description" content="Generate unique thunderstorm audio with physically-accurate N-wave synthesis for the thunder 'crack' using the Web Audio API.">
+    <meta property="twitter:image" content="https://placehold.co/1200x630/111827/FFFFFF?text=Thunder%0ASynthesizer">
+
+    <!-- Scripts and Styles -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Sora', sans-serif; }
+        input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 8px; background: #374151; border-radius: 5px; outline: none; opacity: 0.7; transition: opacity .2s; }
+        input[type=range]:hover { opacity: 1; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; background: #60a5fa; cursor: pointer; border-radius: 50%; border: 2px solid #111827; }
+        input[type=range]::-moz-range-thumb { width: 24px; height: 24px; background: #60a5fa; cursor: pointer; border-radius: 50%; border: 2px solid #111827; }
+        select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+            -webkit-print-color-adjust: exact;
+        }
+    </style>
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Interactive Thunderstorm Simulator",
+      "description": "An interactive web application that procedurally generates the sound of thunder using N-wave synthesis and physical modeling with the Web Audio API.",
+      "applicationCategory": "MultimediaApplication",
+      "operatingSystem": "All",
+      "browserRequirements": "Requires a modern browser with Web Audio API support.",
+      "creator": {
+        "@type": "Organization",
+        "name": "Web Audio Creations"
+      },
+      "url": "https://example.com/thunder-synthesizer"
+    }
+    </script>
+</head>
+<body class="bg-gray-900 text-gray-200 flex flex-col items-center justify-center min-h-screen p-4">
+
+    <main class="w-full max-w-lg mx-auto p-6 md:p-8 bg-gray-800 rounded-2xl shadow-2xl border border-gray-700">
+        <div class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-white">Thunderstorm Simulator</h1>
+            <p class="text-gray-400 mt-2">Physically-Modeled Storm Audio</p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="grid grid-cols-2 gap-4 mb-8">
+            <button id="manualPlayBtn" class="w-full flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl text-md transition-transform transform active:scale-95 focus:outline-none focus:ring-4 focus:ring-blue-500 focus:ring-opacity-50 shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" /></svg>
+                <span>Manual Strike</span>
+            </button>
+             <button id="randomizeBtn" class="w-full flex items-center justify-center bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 px-4 rounded-xl text-md transition-transform transform active:scale-95 focus:outline-none focus:ring-4 focus:ring-indigo-400 focus:ring-opacity-50 shadow-lg">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                <span>Random Strike</span>
+            </button>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-x-8 gap-y-6">
+            <!-- Parameter Controls -->
+            <section aria-labelledby="manual-controls-heading" class="space-y-6">
+                <h2 id="manual-controls-heading" class="text-lg font-semibold text-center text-gray-400 border-b border-gray-700 pb-2">Sound Controls</h2>
+                <div>
+                    <label for="distance" class="block mb-2 text-sm font-medium text-gray-300">Strike Distance (<span id="distanceValue">5.0</span> km)</label>
+                    <input id="distance" type="range" min="0.5" max="15" value="5" step="0.1" class="w-full">
+                </div>
+                <div>
+                    <label for="complexity" class="block mb-2 text-sm font-medium text-gray-300">Complexity / Jaggedness (<span id="complexityValue">20</span>)</label>
+                    <input id="complexity" type="range" min="5" max="40" value="20" step="1" class="w-full">
+                </div>
+                <div>
+                    <label for="crackIntensity" class="block mb-2 text-sm font-medium text-gray-300">Crack Intensity (<span id="crackIntensityValue">70</span>%)</label>
+                    <input id="crackIntensity" type="range" min="0" max="1" value="0.7" step="0.01" class="w-full">
+                </div>
+                <div>
+                    <label for="rumbleVolume" class="block mb-2 text-sm font-medium text-gray-300">Rumble Volume (<span id="rumbleVolumeValue">50</span>%)</label>
+                    <input id="rumbleVolume" type="range" min="0" max="1" value="0.5" step="0.01" class="w-full">
+                </div>
+            </section>
+            
+            <!-- Environment Controls -->
+            <section aria-labelledby="environment-controls-heading" class="space-y-6">
+                <h2 id="environment-controls-heading" class="text-lg font-semibold text-center text-gray-400 border-b border-gray-700 pb-2">Environment</h2>
+                <div>
+                    <label for="reverbType" class="block mb-2 text-sm font-medium text-gray-300">Acoustic Space</label>
+                    <select id="reverbType" class="w-full bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 appearance-none">
+                        <option value="none">None (Anechoic)</option>
+                        <option value="field" selected>Open Field</option>
+                        <option value="city">City</option>
+                        <option value="valley">Valley</option>
+                        <option value="hall">Large Hall</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="reverbAmount" class="block mb-2 text-sm font-medium text-gray-300">Reverb Amount (<span id="reverbAmountValue">30</span>%)</label>
+                    <input id="reverbAmount" type="range" min="0" max="1" value="0.3" step="0.01" class="w-full">
+                </div>
+            </section>
+        </div>
+
+
+        <!-- Algorithm Explanation -->
+        <section aria-labelledby="algorithm-heading" class="mt-8 pt-6 border-t border-gray-700">
+            <h2 id="algorithm-heading" class="text-lg font-semibold text-white mb-3">How The Algorithm Works</h2>
+            <dl class="text-sm text-gray-400 leading-relaxed space-y-4">
+                <div>
+                    <dt class="font-semibold text-gray-300 mb-1">1. N-Wave Synthesis for the "Crack"</dt>
+                    <dd>The sharp initial "crack" is no longer noise. It's a mathematically generated <strong class="text-gray-200">N-wave</strong>, a direct simulation of the acoustic shockwave from a lightning strike. This creates a sharper, more realistic impulse.</dd>
+                </div>
+                <div>
+                    <dt class="font-semibold text-gray-300 mb-1">2. Procedural Rumble Generation</dt>
+                    <dd>The rolling "rumble" is simulated by creating many (<span class="font-bold text-gray-200" id="complexityGuide">20</span>) discrete sound events from pink noise. The "Complexity" slider controls how many events are generated, simulating a more jagged lightning bolt.</dd>
+                </div>
+                 <div>
+                    <dt class="font-semibold text-gray-300 mb-1">3. Spatialization & Environment</dt>
+                    <dd>Each complete thunder strike is randomly placed in the stereo field. A convolution reverb then simulates how the sound reflects off surfaces in the chosen "Acoustic Space," adding realistic echoes and decay.</dd>
+                </div>
+            </dl>
+        </section>
+    </main>
+
+    <script>
+        let audioContext;
+        let pinkNoiseBuffer;
+        let masterGain, wetGain, convolver;
+
+        const ui = {
+            manualPlayBtn: document.getElementById('manualPlayBtn'),
+            randomizeBtn: document.getElementById('randomizeBtn'),
+            distance: document.getElementById('distance'),
+            distanceValue: document.getElementById('distanceValue'),
+            complexity: document.getElementById('complexity'),
+            complexityValue: document.getElementById('complexityValue'),
+            complexityGuide: document.getElementById('complexityGuide'),
+            crackIntensity: document.getElementById('crackIntensity'),
+            crackIntensityValue: document.getElementById('crackIntensityValue'),
+            rumbleVolume: document.getElementById('rumbleVolume'),
+            rumbleVolumeValue: document.getElementById('rumbleVolumeValue'),
+            reverbType: document.getElementById('reverbType'),
+            reverbAmount: document.getElementById('reverbAmount'),
+            reverbAmountValue: document.getElementById('reverbAmountValue'),
+        };
+
+        const initAudio = async () => {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                masterGain = audioContext.createGain();
+                wetGain = audioContext.createGain();
+                convolver = audioContext.createConvolver();
+                masterGain.connect(audioContext.destination);
+                wetGain.connect(masterGain);
+                convolver.connect(wetGain);
+                pinkNoiseBuffer = createPinkNoiseBuffer();
+                await updateReverb();
+            }
+            if (audioContext.state === 'suspended') {
+                await audioContext.resume();
+            }
+        };
+        
+        const updateDisplays = () => {
+             ui.distanceValue.textContent = parseFloat(ui.distance.value).toFixed(1);
+             ui.complexityValue.textContent = ui.complexity.value;
+             ui.complexityGuide.textContent = ui.complexity.value;
+             ui.crackIntensityValue.textContent = Math.round(ui.crackIntensity.value * 100);
+             ui.rumbleVolumeValue.textContent = Math.round(ui.rumbleVolume.value * 100);
+             ui.reverbAmountValue.textContent = Math.round(ui.reverbAmount.value * 100);
+        };
+        
+        const randomizeParameters = () => {
+            ui.distance.value = (0.5 + Math.pow(Math.random(), 2) * 14.5).toFixed(1);
+            ui.complexity.value = Math.floor(5 + Math.random() * 35);
+            ui.crackIntensity.value = (0.3 + Math.random() * 0.7).toFixed(2);
+            ui.rumbleVolume.value = (0.2 + Math.random() * 0.6).toFixed(2);
+            ui.reverbAmount.value = (Math.random() * 0.6).toFixed(2);
+            const reverbTypes = Array.from(ui.reverbType.options).map(o => o.value);
+            ui.reverbType.value = reverbTypes[Math.floor(Math.random() * reverbTypes.length)];
+            updateDisplays();
+            updateReverb();
+        };
+
+        ui.manualPlayBtn.addEventListener('click', async () => {
+            await initAudio();
+            generateThunder();
+        });
+
+        ui.randomizeBtn.addEventListener('click', async () => {
+            await initAudio();
+            randomizeParameters();
+            generateThunder();
+        });
+        
+        const parameterSliders = [ui.distance, ui.complexity, ui.crackIntensity, ui.rumbleVolume, ui.reverbAmount];
+        parameterSliders.forEach(slider => slider.addEventListener('input', updateDisplays));
+        ui.reverbType.addEventListener('change', () => updateReverb());
+        ui.reverbAmount.addEventListener('input', () => wetGain.gain.setValueAtTime(ui.reverbAmount.value, audioContext.currentTime));
+
+        const createPinkNoiseBuffer = () => {
+            const bufferSize = audioContext.sampleRate * 2;
+            const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+            const output = buffer.getChannelData(0);
+            let b0=0, b1=0, b2=0, b3=0, b4=0, b5=0, b6=0;
+            for (let i = 0; i < bufferSize; i++) {
+                const white = Math.random() * 2 - 1;
+                b0 = 0.99886 * b0 + white * 0.0555179; b1 = 0.99332 * b1 + white * 0.0750759;
+                b2 = 0.96900 * b2 + white * 0.1538520; b3 = 0.86650 * b3 + white * 0.3104856;
+                b4 = 0.55000 * b4 + white * 0.5329522; b5 = -0.7616 * b5 - white * 0.0168980;
+                output[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
+                output[i] *= 0.11; b6 = white * 0.115926;
+            }
+            return buffer;
+        };
+        
+        const createNWaveBuffer = () => {
+            const duration = 0.05;
+            const bufferSize = audioContext.sampleRate * duration;
+            const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+            const data = buffer.getChannelData(0);
+            const peakSample = Math.floor(bufferSize * 0.02);
+            for (let i = 0; i < peakSample; i++) {
+                data[i] = (i / peakSample);
+            }
+            for (let i = peakSample; i < bufferSize; i++) {
+                data[i] = 1.0 - 2.0 * ((i - peakSample) / (bufferSize - peakSample));
+            }
+            return buffer;
+        };
+        
+        async function updateReverb() {
+            if (!audioContext) await initAudio();
+            wetGain.gain.setValueAtTime(ui.reverbAmount.value, audioContext.currentTime);
+            const impulse = generateImpulseResponse(ui.reverbType.value);
+            if(impulse){
+                convolver.buffer = impulse;
+            }
+        }
+
+        function generateImpulseResponse(type) {
+            if (type === 'none') {
+                wetGain.gain.value = 0;
+                return null;
+            }
+            const rate = audioContext.sampleRate;
+            let seconds = 2, decay = 2;
+            switch (type) {
+                case "field": seconds = 1.5; decay = 1.5; break;
+                case "city": seconds = 2.5; decay = 2.0; break;
+                case "valley": seconds = 5; decay = 3; break;
+                case "hall": seconds = 3; decay = 2.5; break;
+            }
+            const len = rate * seconds;
+            const buffer = audioContext.createBuffer(2, len, rate);
+            for (let c = 0; c < 2; c++) {
+                const impulse = buffer.getChannelData(c);
+                for (let i = 0; i < len; i++) {
+                    impulse[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / len, decay);
+                }
+            }
+            return buffer;
+        }
+
+        function generateThunder() {
+            if (!audioContext) return;
+            const now = audioContext.currentTime;
+            
+            const strikeBus = audioContext.createGain();
+            strikeBus.connect(masterGain);
+            strikeBus.connect(convolver);
+
+            const panner = audioContext.createStereoPanner();
+            panner.pan.value = Math.random() * 2 - 1;
+            panner.connect(strikeBus);
+
+            const distance = parseFloat(ui.distance.value);
+            const complexity = parseInt(ui.complexity.value);
+            const crackIntensity = parseFloat(ui.crackIntensity.value);
+            const rumbleVolume = parseFloat(ui.rumbleVolume.value);
+
+            // N-Wave Crack
+            const crackSource = audioContext.createBufferSource();
+            crackSource.buffer = createNWaveBuffer();
+            const crackGain = audioContext.createGain();
+            crackGain.gain.setValueAtTime(0, now);
+            crackGain.gain.linearRampToValueAtTime(crackIntensity, now + 0.005);
+            crackGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.1);
+            const highpass = audioContext.createBiquadFilter();
+            highpass.type = 'highpass';
+            highpass.frequency.value = 100;
+            crackSource.connect(highpass).connect(crackGain).connect(panner);
+            crackSource.start(now);
+            crackSource.stop(now + 0.2);
+
+            // Rumbles
+            const totalRumbleDuration = distance * 0.8;
+            for (let i = 0; i < complexity; i++) {
+                const rumbleSource = audioContext.createBufferSource();
+                rumbleSource.buffer = pinkNoiseBuffer;
+                const delayTime = Math.random() * totalRumbleDuration;
+                const eventTime = now + 0.05 + delayTime;
+                const rumbleGain = audioContext.createGain();
+                const randomAmp = (Math.random() * 0.5 + 0.5) * rumbleVolume;
+                rumbleGain.gain.setValueAtTime(0, eventTime);
+                rumbleGain.gain.linearRampToValueAtTime(randomAmp, eventTime + 0.05);
+                rumbleGain.gain.exponentialRampToValueAtTime(0.0001, eventTime + 1.5 + Math.random());
+                const lowpass = audioContext.createBiquadFilter();
+                lowpass.type = 'lowpass';
+                const maxFreq = 6000, minFreq = 200;
+                lowpass.frequency.value = maxFreq - (delayTime / totalRumbleDuration) * (maxFreq - minFreq);
+                rumbleSource.connect(lowpass).connect(rumbleGain).connect(panner);
+                rumbleSource.start(eventTime);
+                rumbleSource.stop(eventTime + 2.0);
+            }
+        }
+        
+        updateDisplays();
+    </script>
+</body>
+</html>
+
